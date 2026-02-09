@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Valentine Wall Kenya 🌹</title>
+
+<style>
+body{
+  font-family: Arial, sans-serif;
+  background:#ffe6eb;
+  text-align:center;
+}
+h1{
+  color:#d6003d;
+}
+.card{
+  background:white;
+  margin:20px auto;
+  padding:20px;
+  width:80%;
+  border-radius:12px;
+  box-shadow:0 0 10px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+}
+.flower{
+  font-size:35px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🌹 Kenya Valentine Wall 🌹</h1>
+<p>Public messages of love from across Kenya ❤️</p>
+
+<div id="wall"></div>
+
+<script>
+const sheetID = "1UJXtENBRZeBEbF1jaJl8MN527FK-jNlJwkfCZ8Se5Y0"; // <-- Replace with your Sheet ID
+const url = `https://opensheet.elk.sh/${sheetID}/Sheet1`;
+
+fetch(url)
+.then(res => res.json())
+.then(data => {
+  let wall = document.getElementById('wall');
+
+  data.reverse().forEach(row => {
+    // Only show approved payments
+    if(row["Approved"] !== "YES") return;
+
+    let from = row["Your Name"];
+    let to = row["Recipient Name"];
+    let msg = row["Your Valentine Message"];
+    let anonymous = row["Anonymous?"];
+    let pkg = row["Choose Package"];
+
+    if(anonymous && anonymous.toLowerCase() === "yes") {
+      from = "Anonymous";
+    }
+
+    // Decide roses based on package
+    let roses = "🌹";
+    let cardStyle = "";
+
+    if(pkg.includes("Bouquet")) roses = "🌹🌹🌹🌹🌹";
+    if(pkg.includes("Premium")) {
+      roses = "🌹🌹🌹🌹🌹🌹🌹🌹🌹";
+      cardStyle = "border:3px solid gold; box-shadow: 0 0 20px rgba(255,215,0,0.5);";
+    }
+
+    wall.innerHTML += `
+      <div class="card" style="${cardStyle}">
+        <div class="flower">${roses}</div>
+        <h3>From: ${from}</h3>
+        <h3>To: ${to}</h3>
+        <p>"${msg}"</p>
+      </div>
+    `;
+  });
+});
+</script>
+
+</body>
+</html>
