@@ -1,280 +1,291 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Utawala Birthday Wall 🎂</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js"></script>
+
+<!-- Confetti -->
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <style>
-body {
-  font-family: Arial, sans-serif;
-  background: #fff8f0;
-  color: #333;
-  margin: 0;
-  padding: 0;
-  transition: background 0.3s, color 0.3s;
+body{
+  font-family: Arial;
+  margin:0;
+  padding:20px;
+  background:linear-gradient(135deg,#ff9a9e,#fad0c4);
+  text-align:center;
 }
-
-.dark-mode {
-  background: #121212;
-  color: #f5f5f5;
+h1{color:white;}
+.box{
+  background:white;
+  padding:20px;
+  border-radius:15px;
+  max-width:450px;
+  margin:20px auto;
+  box-shadow:0 10px 25px rgba(0,0,0,0.2);
 }
-
-h1 {
-  text-align: center;
-  padding: 20px;
-  color: #ff4500;
+input,textarea,select{
+  width:100%;
+  padding:10px;
+  margin:6px 0;
+  border-radius:8px;
+  border:1px solid #ccc;
 }
-
-.controls {
-  text-align: center;
-  margin-bottom: 10px;
+button{
+  padding:10px;
+  border:none;
+  border-radius:8px;
+  background:#ff4081;
+  color:white;
+  cursor:pointer;
+  margin-top:5px;
 }
-
-button {
-  padding: 8px 14px;
-  margin: 5px;
-  border-radius: 20px;
-  border: none;
-  cursor: pointer;
-  font-weight: bold;
+button:hover{background:#e73370;}
+.wall{
+  display:grid;
+  gap:15px;
+  margin-top:20px;
 }
-
-.counter {
-  text-align: center;
-  font-size: 16px;
-  margin-bottom: 10px;
-  color: #ff4500;
+.card{
+  background:white;
+  padding:15px;
+  border-radius:15px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.2);
 }
-
-.message-wall {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 10px;
+.premium{
+  border:3px solid gold;
+  box-shadow:0 0 20px gold;
 }
-
-.card {
-  background: #ffe4e1;
-  border-radius: 12px;
-  padding: 15px;
-  margin: 10px;
-  width: 90%;
-  max-width: 500px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-  position: relative;
-  opacity: 0;
-  transform: translateY(20px);
-  animation: fadeUp 0.8s forwards;
+.featured{
+  background:gold;
+  padding:15px;
+  border-radius:15px;
+  margin-bottom:20px;
 }
-
-.dark-mode .card {
-  background: #1f1f1f;
+.hidden{display:none;}
+.admin{background:black;}
+.analytics{
+  background:#222;
+  color:white;
+  padding:15px;
+  border-radius:12px;
+  margin-top:15px;
 }
-
-.premium {
-  border: 3px solid #ff69b4;
-  animation: glow 1.5s ease-in-out infinite alternate;
-}
-
-.badge {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: #ff1493;
-  color: white;
-  padding: 8px 14px;
-  border-radius: 20px;
-  font-size: 18px;
-  font-weight: bold;
-}
-
-.ribbon {
-  position: absolute;
-  left: -5px;
-  top: -5px;
-  background: red;
-  color: white;
-  padding: 4px 10px;
-  font-size: 12px;
-  font-weight: bold;
-  transform: rotate(-15deg);
-  border-radius: 6px;
-}
-
-.name {
-  font-weight: bold;
-  font-size: 18px;
-  color: #ff4500;
-}
-
-.recipient {
-  font-style: italic;
-  color: #ff69b4;
-  margin-top: 5px;
-}
-
-.text {
-  margin-top: 8px;
-}
-
-.cake {
-  font-size: 50px;
-  text-align: center;
-  display: block;
-}
-
-.image {
-  margin-top: 10px;
-  max-width: 100%;
-  border-radius: 8px;
-}
-
-@keyframes fadeUp {
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes glow {
-  0% { box-shadow: 0 0 10px #ff69b4; }
-  50% { box-shadow: 0 0 30px #ff1493; }
-  100% { box-shadow: 0 0 10px #ff69b4; }
-}
-
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
-}
-
-.newest {
-  animation: pulse 1s ease-in-out 4;
-}
-
-/* Floating balloons */
-.balloon {
-  position: fixed;
-  bottom: -100px;
-  font-size: 40px;
-  animation: floatUp 10s linear infinite;
-  opacity: 0.7;
-}
-
-@keyframes floatUp {
-  from { transform: translateY(0); }
-  to { transform: translateY(-120vh); }
+.countdown{
+  font-size:18px;
+  font-weight:bold;
+  color:#ff4081;
+  margin-top:10px;
 }
 </style>
 </head>
-
 <body>
 
-<h1>Utawala Birthday Wall 🎂</h1>
+<h1>🎂 Utawala Birthday Wall 🎂</h1>
 
-<div class="controls">
-  <button onclick="toggleMusic()">🎵 Music</button>
-  <button onclick="toggleDarkMode()">🌙 Dark Mode</button>
+<div id="featured"></div>
+<div id="countdown" class="countdown"></div>
+
+<div class="box">
+<h3>Post Birthday Message</h3>
+<input id="from" placeholder="From">
+<input id="to" placeholder="To">
+<input type="date" id="birthdayDate">
+<textarea id="message" placeholder="Message"></textarea>
+<input type="file" id="imageFile">
+<select id="premium">
+<option value="No">Normal (KES 200)</option>
+<option value="Yes">Premium (KES 500)</option>
+</select>
+<button onclick="submitMsg()">Submit (Approval Required)</button>
+<button class="admin" onclick="adminLogin()">Admin Panel</button>
 </div>
 
-<div class="counter" id="counter">Loading...</div>
-<div class="message-wall" id="wall"></div>
+<div class="box hidden" id="adminPanel">
+<h3>Admin Dashboard</h3>
+<div id="analytics" class="analytics"></div>
+<div id="pending"></div>
+</div>
 
-<audio id="bgMusic" loop>
-  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-</audio>
+<div class="wall" id="wall"></div>
 
 <script>
-const sheetID = "PASTE_YOUR_SHEET_ID_HERE";
-const gvizURL = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json`;
 
-function toggleMusic() {
-  const music = document.getElementById("bgMusic");
-  music.paused ? music.play() : music.pause();
+/* 🔥 REPLACE WITH YOUR FIREBASE CONFIG */
+const firebaseConfig = {
+  apiKey: "AIzaSyCPG6MTfF49v7-MYZKzgQm-aS8HARRdIU0",
+  authDomain: "utawalabirthdaywall.firebaseapp.com",
+  databaseURL: "https://utawalabirthdaywall-default-rtdb.firebaseio.com",
+  projectId: "utawalabirthdaywall",
+  storageBucket: "utawalabirthdaywall.firebasestorage.app",
+  messagingSenderId: "488490311718",
+  appId: "1:488490311718:web:8d9acf2eac76ed5ea306e7"
+};
+  
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const storage = firebase.storage();
+const ref = db.ref("birthdayMessages");
+
+let ADMIN_PASSWORD = "1234"; // Change this!
+let lastApprovedCount = 0;
+
+/* Submit Message */
+async function submitMsg(){
+  const from=document.getElementById("from").value;
+  const to=document.getElementById("to").value;
+  const message=document.getElementById("message").value;
+  const premium=document.getElementById("premium").value;
+  const birthdayDate=document.getElementById("birthdayDate").value;
+  const file=document.getElementById("imageFile").files[0];
+
+  if(!from||!to||!message){
+    alert("Fill required fields");
+    return;
+  }
+
+  let imageURL="";
+  if(file){
+    const storageRef=storage.ref("images/"+Date.now()+"_"+file.name);
+    await storageRef.put(file);
+    imageURL=await storageRef.getDownloadURL();
+  }
+
+  let price=premium==="Yes"?500:200;
+
+  ref.push({
+    from,
+    to,
+    message,
+    imageURL,
+    premium,
+    birthdayDate,
+    paid:false,
+    price,
+    timestamp:Date.now()
+  });
+
+  alert("Submitted for approval!");
 }
 
-function toggleDarkMode() {
-  document.body.classList.toggle("dark-mode");
+/* Load Data */
+ref.on("value",snap=>{
+  const wall=document.getElementById("wall");
+  const pending=document.getElementById("pending");
+  const featured=document.getElementById("featured");
+  const analytics=document.getElementById("analytics");
+
+  wall.innerHTML="";
+  pending.innerHTML="";
+  featured.innerHTML="";
+
+  let total=0, approved=0, pendingCount=0, premiumCount=0;
+  let now=Date.now();
+
+  snap.forEach(child=>{
+    const data=child.val();
+    const id=child.key;
+
+    /* Auto Expire After 7 Days */
+    if(data.paid && now-data.timestamp>7*24*60*60*1000){
+      ref.child(id).remove();
+      return;
+    }
+
+    if(data.paid){
+      approved++;
+      total+=data.price;
+      if(data.premium==="Yes") premiumCount++;
+    }
+
+    /* Approved Posts */
+    if(data.paid===true){
+      const card=document.createElement("div");
+      card.className="card";
+      if(data.premium==="Yes") card.classList.add("premium");
+
+      card.innerHTML=`
+      <h3>🎉 ${data.from} → ${data.to}</h3>
+      <p>${data.message}</p>
+      ${data.imageURL?`<img src="${data.imageURL}" width="100%">`:""}
+      `;
+
+      wall.appendChild(card);
+
+      if(data.birthdayDate){
+        startCountdown(data.birthdayDate);
+      }
+
+      if(data.premium==="Yes"){
+        const f=document.createElement("div");
+        f.className="featured";
+        f.innerHTML=`👑 PREMIUM: ${data.from} → ${data.to}<br>${data.message}`;
+        featured.appendChild(f);
+      }
+    }
+
+    /* Pending */
+    if(data.paid===false){
+      pendingCount++;
+      pending.innerHTML+=`
+      <strong>${data.from} → ${data.to}</strong><br>
+      <button onclick="approve('${id}')">Approve</button>
+      <button onclick="del('${id}')">Delete</button>
+      <hr>
+      `;
+    }
+
+  });
+
+  if(approved>lastApprovedCount){
+    confetti({particleCount:100,spread:70});
+  }
+  lastApprovedCount=approved;
+
+  analytics.innerHTML=`
+  💰 Earnings: KES ${total}<br>
+  ✅ Approved: ${approved}<br>
+  ⏳ Pending: ${pendingCount}<br>
+  👑 Premium Posts: ${premiumCount}
+  `;
+});
+
+/* Countdown */
+function startCountdown(date){
+  const countdown=document.getElementById("countdown");
+  const target=new Date(date).getTime();
+  setInterval(()=>{
+    const now=Date.now();
+    const diff=target-now;
+    if(diff>0){
+      const days=Math.floor(diff/(1000*60*60*24));
+      countdown.innerHTML=`🎂 Birthday in ${days} days`;
+    }
+  },1000);
 }
 
-function createBalloon() {
-  const balloon = document.createElement("div");
-  balloon.className = "balloon";
-  balloon.style.left = Math.random() * 100 + "vw";
-  balloon.innerHTML = "🎈";
-  document.body.appendChild(balloon);
-  setTimeout(() => balloon.remove(), 10000);
-}
-setInterval(createBalloon, 2000);
+/* Approve/Delete */
+function approve(id){ref.child(id).update({paid:true});}
+function del(id){ref.child(id).remove();}
 
-function loadWall() {
-  fetch(gvizURL)
-    .then(res => res.text())
-    .then(text => {
-      const json = JSON.parse(text.substring(47).slice(0, -2));
-      const rows = json.table.rows;
-
-      const wallDiv = document.getElementById("wall");
-      const counterDiv = document.getElementById("counter");
-      wallDiv.innerHTML = "";
-
-      let messages = [];
-      let totalPremium = 0;
-
-      rows.forEach(row => {
-        const approved = row.c[json.table.cols.findIndex(c=>c.label==="Approved")]?.v;
-        if (approved && approved.toLowerCase() === "yes") {
-          const from = row.c[json.table.cols.findIndex(c=>c.label==="From")]?.v || "Someone";
-          const to = row.c[json.table.cols.findIndex(c=>c.label==="To")]?.v || "Friend";
-          const message = row.c[json.table.cols.findIndex(c=>c.label==="Birthday Message")]?.v || "";
-          const imageURL = row.c[json.table.cols.findIndex(c=>c.label==="Image URL")]?.v || "";
-          const premium = row.c[json.table.cols.findIndex(c=>c.label==="Premium")]?.v || "No";
-          const timestamp = row.c[0]?.v;
-
-          if (premium.toLowerCase() === "yes") totalPremium++;
-          messages.push({from, to, message, imageURL, premium, timestamp});
-        }
-      });
-
-      counterDiv.innerHTML = `Total Messages: ${messages.length} | Featured: ${totalPremium}`;
-
-      messages.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
-
-      messages.forEach((msg, index) => {
-        const card = document.createElement("div");
-        let classes = "card";
-        if (msg.premium.toLowerCase() === "yes") classes += " premium";
-        if (index === 0) classes += " newest";
-        card.className = classes;
-
-        const isNew = (Date.now() - new Date(msg.timestamp).getTime()) < 120000;
-
-        card.innerHTML = `
-          ${msg.premium.toLowerCase() === "yes" ? `<div class="badge">⭐ Featured</div>` : ""}
-          ${isNew ? `<div class="ribbon">NEW</div>` : ""}
-          <span class="cake">🎂</span>
-          <div class="name">${msg.from}</div>
-          <div class="recipient">wishes ${msg.to} a Happy Birthday</div>
-          <div class="text">${msg.message}</div>
-          ${msg.imageURL ? `<img class="image" src="${msg.imageURL}">` : ""}
-        `;
-
-        wallDiv.appendChild(card);
-
-        if (index === 0) {
-          window.scrollTo({ top: 0, behavior: "smooth" });
-          new Audio("https://www.soundjay.com/buttons/sounds/button-3.mp3").play();
-        }
-
-        if (index === 0 && msg.premium.toLowerCase() === "yes") {
-          confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-        }
-      });
-    });
+/* Admin Login */
+function adminLogin(){
+  let pass=prompt("Enter Admin Password:");
+  if(pass===ADMIN_PASSWORD){
+    document.getElementById("adminPanel").classList.remove("hidden");
+  }else{
+    alert("Wrong password");
+  }
 }
 
-loadWall();
-setInterval(loadWall, 45000);
 </script>
 
 </body>
